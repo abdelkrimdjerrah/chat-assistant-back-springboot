@@ -6,7 +6,7 @@ import java.util.List;
 
 public interface SessionRepository extends MongoRepository<Session, String> {
     @Query("{'userId': ?0}")
-    List<Session> findAllSessionsByUserId(String user);
+    List<Session> findAllSessionsByUserId(String userId);
 
     @Query("{'sessionId': ?0}")
     Session findBySessionId(String sessionId);

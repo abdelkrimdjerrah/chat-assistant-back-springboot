@@ -2,6 +2,7 @@ package epdbackendjava.chatassistant.Chat;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Document(collection = "sessions")
@@ -9,11 +10,22 @@ public class Session {
     @Id
     private String sessionId;
     private String userId;
-    private List<Message> conversations;
+    private List<Message> conversation;
 
-    public Session(String userId, List<Message> conversations) {
+
+    public Session(String userId, List<Message> conversation) {
         this.userId = userId;
-        this.conversations = conversations;
+        this.conversation = conversation;
+    }
+
+    public Session(String userId) {
+        this.userId = userId;
+        this.conversation = new ArrayList<>();
+    }
+
+    public Session() {
+        this.userId = "";
+        this.conversation = new ArrayList<>();
     }
 
 
@@ -33,12 +45,12 @@ public class Session {
         this.userId = userId;
     }
 
-    public List<Message> getConversations() {
-        return conversations;
+    public List<Message> getConversation() {
+        return conversation;
     }
 
-    public void setConversations(List<Message> conversations) {
-        this.conversations = conversations;
+    public void setConversation(List<Message> conversation) {
+        this.conversation = conversation;
     }
 
 }

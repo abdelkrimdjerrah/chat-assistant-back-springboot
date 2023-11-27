@@ -13,9 +13,7 @@ public class Message {
         this.timestamp = timestamp;
     }
 
-    public String getText() {
-        return text;
-    }
+    public String getText() {return text;}
 
     public void setText(String text) {
         this.text = text;

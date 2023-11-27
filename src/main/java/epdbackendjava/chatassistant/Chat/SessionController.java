@@ -6,6 +6,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
+
+@CrossOrigin("*")
 @RestController
 @RequestMapping("api/sessions")
 public class SessionController {
@@ -17,23 +19,24 @@ public class SessionController {
     }
 
     @PostMapping
-    public Session createSession(Session session) {
-        return sessionService.createSession(session);
+    public String createSession(@RequestBody Map<String, String> requestBody) {
+        String userId = requestBody.get("userId");
+        return sessionService.createSession(userId);
     }
 
     @PostMapping("/chat")
-    public Session chatToBot(@RequestBody Map<String, String> requestBody) {
+    public String chatToBot(@RequestBody Map<String, String> requestBody) {
         String sessionId = requestBody.get("sessionId");
         String input = requestBody.get("input");
         return sessionService.chatToBot(sessionId, input);
     }
 
-    @GetMapping("/{userId}")
+    @GetMapping("/users/{userId}")
     public List<Session> getAllSessions(@PathVariable String userId) {
         return sessionService.getAllSessions(userId);
     }
 
-    @GetMapping("/{userId}/{sessionId}")
+    @GetMapping("/{sessionId}")
     public Optional<Session> getSessionById(@PathVariable String sessionId) {
         return sessionService.getSessionById(sessionId);
     }

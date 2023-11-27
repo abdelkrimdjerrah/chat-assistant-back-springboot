@@ -8,6 +8,7 @@ import org.springframework.http.*;
 import org.springframework.web.client.RestTemplate;
 
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
@@ -28,12 +29,13 @@ public class SessionService {
         this.restTemplate = restTemplate;
     }
 
-    public Session createSession(Session session) {
+    public String createSession(String userId) {
+        Session session = new Session(userId);
         sessionRepository.save(session);
-        return session;
+        return session.getSessionId();
     }
 
-    public Session chatToBot(String sessionId, String input) {
+    public String chatToBot(String sessionId, String input) {
 
         Session session = sessionRepository.findBySessionId(sessionId);
         String botMessage = "";
@@ -78,19 +80,19 @@ public class SessionService {
             Message userMessage = new Message(input, true, new Date());
             Message assistantMessage = new Message(botMessage, false, new Date());
 
-            List<Message> conversations = session.getConversations();
+            List<Message> conversation = session.getConversation();
 
-            conversations.add(userMessage);
-            conversations.add(assistantMessage);
+            conversation.add(userMessage);
+            conversation.add(assistantMessage);
 
-            session.setConversations(conversations);
+            session.setConversation(conversation);
 
             sessionRepository.save(session);
 
 
         }
 
-        return session;
+        return botMessage;
     }
 
     public List<Session> getAllSessions(String userId) {
@@ -98,8 +100,18 @@ public class SessionService {
     }
 
     public Optional<Session> getSessionById(String sessionId) {
-        return sessionRepository.findById(sessionId);
+        try {
+            Optional<Session> t = sessionRepository.findById(sessionId);
+            System.out.println("ggg");
+            return t;
+        } catch (Exception e) {
+            System.out.println("olalalal");
+            e.printStackTrace();
+            // Handle the exception appropriately
+            return Optional.empty(); // Or rethrow the exception
+        }
     }
+
 
 
 
