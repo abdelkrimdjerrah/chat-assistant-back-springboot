@@ -18,16 +18,5 @@ public class ChatAssistantApplication {
 		SpringApplication.run(ChatAssistantApplication.class, args);
 	}
 
-//	@Bean
-//	CommandLineRunner runner(SessionRepository repository){
-//		return args -> {
-//			Message userMessage = new Message("Hello, how are youiuuuuuu?", true, new Date());
-//			Message assistantMessage = new Message("Hi thereeeeeee! I'm doing well, thank you.", false, new Date());
-//			// Create a sample session with messages
-//			Session session = new Session("john_doe", Arrays.asList(userMessage, assistantMessage));
-//
-//			repository.insert(session);
-//		};
-//	}
 
 }

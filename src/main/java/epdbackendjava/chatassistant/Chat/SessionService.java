@@ -3,11 +3,12 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.http.*;
 import org.springframework.web.client.RestTemplate;
 
-
+import org.springframework.beans.factory.annotation.Value;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -18,6 +19,8 @@ import java.util.concurrent.Exchanger;
 public class SessionService {
 
 
+    @Value("${RAPID_API_KEY}")
+    String rapidApiKey;
     private final SessionRepository sessionRepository;
     private final RestTemplate restTemplate;
 
@@ -37,14 +40,21 @@ public class SessionService {
 
     public String chatToBot(String sessionId, String input) {
 
+        System.out.println("ID");
+        System.out.println(sessionId);
+        System.out.println("ID");
         Session session = sessionRepository.findBySessionId(sessionId);
         String botMessage = "";
 
+        System.out.println("1");
+
+
         if (session != null) {
 
+            System.out.println("2");
             HttpHeaders headers = new HttpHeaders();
             headers.setContentType(MediaType.APPLICATION_JSON);
-            headers.set("X-RapidAPI-Key", "ea8ab30eadmshe895b9cbb8a476fp1ea342jsnff70dd151c87");
+            headers.set("X-RapidAPI-Key", rapidApiKey);
             headers.set("X-RapidAPI-Host", "lemurbot.p.rapidapi.com");
 
             String requestBody = "{\"bot\":\"dilly\",\"client\":\"d531e3bd-b6c3-4f3f-bb58-a6632cbed5e2\",\"message\":\"" + input + "\"}";
@@ -58,7 +68,10 @@ public class SessionService {
                     String.class
             );
 
+
             if (responseEntity.getStatusCode() == HttpStatus.OK) {
+
+                System.out.println("3");
                 String responseBody = responseEntity.getBody();
 
                 // parsing JSON
@@ -74,6 +87,7 @@ public class SessionService {
 
             }
             else {
+                System.out.println("4");
                 botMessage = "Sorry, couldn't find an answer";
             }
 
@@ -88,6 +102,8 @@ public class SessionService {
             session.setConversation(conversation);
 
             sessionRepository.save(session);
+
+            System.out.println("5");
 
 
         }
@@ -112,8 +128,9 @@ public class SessionService {
         }
     }
 
-
-
-
+    public Boolean deleteSessionById(String sessionId) {
+            sessionRepository.deleteById(sessionId);
+            return sessionRepository.findById(sessionId).isEmpty();
+    }
 
 }
