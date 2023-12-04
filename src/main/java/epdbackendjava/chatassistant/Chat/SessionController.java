@@ -19,11 +19,9 @@ import jakarta.servlet.http.HttpServletResponse;
 public class SessionController {
 
     private final SessionService sessionService;
-    private final JwtAuthenticationFilter jwtAuthenticationFilter;
 
     public SessionController(SessionService sessionService, JwtAuthenticationFilter jwtAuthenticationFilter) {
         this.sessionService = sessionService;
-        this.jwtAuthenticationFilter = jwtAuthenticationFilter;
     }
 
     //filter for JWT authentication to all endpoints in this controller

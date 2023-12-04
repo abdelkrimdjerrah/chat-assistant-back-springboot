@@ -18,17 +18,18 @@ import org.springframework.web.filter.OncePerRequestFilter;
 
 @Component
 @RequiredArgsConstructor
-public class JwtAuthenticationFilter extends OncePerRequestFilter {
-
+//public class JwtAuthenticationFilter extends OncePerRequestFilter {
+public class JwtAuthenticationFilter  {
     @Value("${ACCESS_TOKEN_SECRET}")
     private String secretKey;
 
-    @Override
+
     protected void doFilterInternal(
             @NonNull HttpServletRequest request,
             @NonNull HttpServletResponse response,
             @NonNull FilterChain filterChain
     ) throws ServletException, IOException {
+
 
 
         final String authHeader = request.getHeader("Authorization");
@@ -39,6 +40,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
             return;
         }
+
         jwt = authHeader.substring(7);
 
 
@@ -77,9 +79,5 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         filterChain.doFilter(request, response);
     }
 
-    // method to perform JWT authentication
-    public void performAuthentication(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
-            throws ServletException, IOException {
-        this.doFilterInternal(request, response, filterChain);
-    }
+
 }
