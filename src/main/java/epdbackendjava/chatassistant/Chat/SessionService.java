@@ -19,8 +19,8 @@ import java.util.concurrent.Exchanger;
 public class SessionService {
 
 
-    @Value("${RAPID_API_KEY}")
-    String rapidApiKey;
+    @Value("${GOOGLE_API_KEY}")
+    String googleApiKey;
     private final SessionRepository sessionRepository;
     private final RestTemplate restTemplate;
 
@@ -54,15 +54,14 @@ public class SessionService {
             System.out.println("2");
             HttpHeaders headers = new HttpHeaders();
             headers.setContentType(MediaType.APPLICATION_JSON);
-            headers.set("X-RapidAPI-Key", rapidApiKey);
-            headers.set("X-RapidAPI-Host", "lemurbot.p.rapidapi.com");
 
-            String requestBody = "{\"bot\":\"dilly\",\"client\":\"d531e3bd-b6c3-4f3f-bb58-a6632cbed5e2\",\"message\":\"" + input + "\"}";
+            String requestBody = "{\"prompt\":{\"text\":\""+ input +"\"}}";
 
             HttpEntity<String> entity = new HttpEntity<>(requestBody, headers);
 
+            //Using PaLM API from google
             ResponseEntity<String> responseEntity = restTemplate.exchange(
-                    "https://lemurbot.p.rapidapi.com/chat",
+                    "https://generativelanguage.googleapis.com/v1beta2/models/text-bison-001:generateText?key="+googleApiKey,
                     HttpMethod.POST,
                     entity,
                     String.class
@@ -71,7 +70,7 @@ public class SessionService {
 
             if (responseEntity.getStatusCode() == HttpStatus.OK) {
 
-                System.out.println("3");
+
                 String responseBody = responseEntity.getBody();
 
                 // parsing JSON
@@ -83,7 +82,8 @@ public class SessionService {
                     throw new RuntimeException(e);
                 }
 
-                botMessage = jsonNode.path("data").path("conversation").path("output").asText();
+                botMessage = jsonNode.path("candidates").get(0).path("output").asText();
+
 
             }
             else {
