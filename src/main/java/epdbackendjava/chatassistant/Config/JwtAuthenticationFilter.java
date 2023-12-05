@@ -18,8 +18,8 @@ import org.springframework.web.filter.OncePerRequestFilter;
 
 @Component
 @RequiredArgsConstructor
-//public class JwtAuthenticationFilter extends OncePerRequestFilter {
-public class JwtAuthenticationFilter  {
+public class JwtAuthenticationFilter extends OncePerRequestFilter {
+//public class JwtAuthenticationFilter  {
     @Value("${ACCESS_TOKEN_SECRET}")
     private String secretKey;
 
@@ -37,9 +37,11 @@ public class JwtAuthenticationFilter  {
         final String userEmail;
 
         if (authHeader == null || !authHeader.startsWith("Bearer ")) {
-            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-            return;
+            filterChain.doFilter(request, response);
         }
+        else{
+
+
 
         jwt = authHeader.substring(7);
 
@@ -52,7 +54,6 @@ public class JwtAuthenticationFilter  {
             String userId = userInfo.get("userId");
             String email = userInfo.get("email");
 
-            System.out.println(email);
             request.setAttribute("userId", userId);
             request.setAttribute("email", email);
 
@@ -75,6 +76,7 @@ public class JwtAuthenticationFilter  {
             return;
         }
 
+        }
 
         filterChain.doFilter(request, response);
     }

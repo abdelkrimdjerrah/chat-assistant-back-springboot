@@ -23,13 +23,6 @@ public class SessionController {
     public SessionController(SessionService sessionService, JwtAuthenticationFilter jwtAuthenticationFilter) {
         this.sessionService = sessionService;
     }
-
-    //filter for JWT authentication to all endpoints in this controller
-//    @ModelAttribute
-//    public void addJwtFilterToAllEndpoints(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain, @RequestHeader("Authorization") String authHeader) throws Exception {
-//        jwtAuthenticationFilter.performAuthentication(request, response, filterChain);
-//    }
-
     @PostMapping
     public String createSession(@RequestBody Map<String, String> requestBody) {
         String userId = requestBody.get("userId");

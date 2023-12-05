@@ -40,26 +40,38 @@ public class SessionService {
 
     public String chatToBot(String sessionId, String input) {
 
-        System.out.println("ID");
-        System.out.println(sessionId);
-        System.out.println("ID");
+
         Session session = sessionRepository.findBySessionId(sessionId);
         String botMessage = "";
 
-        System.out.println("1");
 
 
         if (session != null) {
 
-            System.out.println("2");
             HttpHeaders headers = new HttpHeaders();
             headers.setContentType(MediaType.APPLICATION_JSON);
 
-            String requestBody = "{\"prompt\":{\"text\":\""+ input +"\"}}";
+            StringBuilder fullConversationText = new StringBuilder();
+            session.getConversation().forEach(message -> {
+
+                if (message.isUser()) {
+                    fullConversationText.append(" Friend:").append(message.getText());
+                } else {
+                    fullConversationText.append(" Ines:").append(message.getText());
+                }
+            });
+
+
+            StringBuilder templateRequestBody = new StringBuilder();
+            templateRequestBody.append("You are Ines, this is your conversation with your Friend: (").append(fullConversationText).append(") now your Friend asked you a question : ").append(input).append(". Give him the answer as Ines.");
+
+
+
+            String requestBody = "{\"prompt\":{\"text\":\""+ templateRequestBody +"\"}}";
 
             HttpEntity<String> entity = new HttpEntity<>(requestBody, headers);
 
-            //Using PaLM API from google
+            //Using ≈ API from google
             ResponseEntity<String> responseEntity = restTemplate.exchange(
                     "https://generativelanguage.googleapis.com/v1beta2/models/text-bison-001:generateText?key="+googleApiKey,
                     HttpMethod.POST,
@@ -73,6 +85,8 @@ public class SessionService {
 
                 String responseBody = responseEntity.getBody();
 
+
+
                 // parsing JSON
                 ObjectMapper objectMapper = new ObjectMapper();
                 JsonNode jsonNode = null;
@@ -82,12 +96,21 @@ public class SessionService {
                     throw new RuntimeException(e);
                 }
 
-                botMessage = jsonNode.path("candidates").get(0).path("output").asText();
+                if (jsonNode != null && jsonNode.has("candidates") && jsonNode.get("candidates").isArray() && jsonNode.get("candidates").size() > 0) {
+                    JsonNode firstCandidate = jsonNode.get("candidates").get(0);
+                    if (firstCandidate.has("output")) {
+                        botMessage = firstCandidate.get("output").asText();
+                    } else {
+                        botMessage = "Sorry, couldn't find an answer";
+                    }
+                } else {
+                    botMessage = "Sorry, couldn't find an answer";
+                }
 
 
             }
             else {
-                System.out.println("4");
+
                 botMessage = "Sorry, couldn't find an answer";
             }
 
@@ -103,7 +126,6 @@ public class SessionService {
 
             sessionRepository.save(session);
 
-            System.out.println("5");
 
 
         }
@@ -118,10 +140,8 @@ public class SessionService {
     public Optional<Session> getSessionById(String sessionId) {
         try {
             Optional<Session> t = sessionRepository.findById(sessionId);
-            System.out.println("ggg");
             return t;
         } catch (Exception e) {
-            System.out.println("olalalal");
             e.printStackTrace();
             // Handle the exception appropriately
             return Optional.empty(); // Or rethrow the exception
