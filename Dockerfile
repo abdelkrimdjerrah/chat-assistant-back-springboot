@@ -1,6 +1,6 @@
 FROM maven:latest AS build
 COPY . .
-RUN mvn clean package
+RUN mvn clean package -DskipTests
 
 FROM openjdk:21-ea-15-jdk
 
