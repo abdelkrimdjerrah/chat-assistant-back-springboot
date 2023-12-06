@@ -57,13 +57,13 @@ public class SessionService {
                 if (message.isUser()) {
                     fullConversationText.append(" Friend:").append(message.getText());
                 } else {
-                    fullConversationText.append(" Ines:").append(message.getText());
+                    fullConversationText.append(" Sacha:").append(message.getText());
                 }
             });
 
 
             StringBuilder templateRequestBody = new StringBuilder();
-            templateRequestBody.append("You are Ines, this is your conversation with your Friend: (").append(fullConversationText).append(") now your Friend asked you a question : ").append(input).append(". Give him the answer as Ines.");
+            templateRequestBody.append("You are Sacha, this is your conversation with your Friend: (").append(fullConversationText).append(") now your Friend asked you a question : ").append(input).append(". Give him the answer as Sacha.");
 
 
 
